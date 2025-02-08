@@ -137,7 +137,7 @@ function browser_notif_yells() {
     chrome.notifications.create({
       type: "basic",
       iconUrl: "icon.png", // Replace with the path to your notification icon
-      title: "ITS TIME TO LOCK IN",
+      title: "ITS TIME TO LOCK IN!!!",
       message: "LOCK IN LOCK LOCK IN LOCK IN",
       priority: 2}, 
     (notificationId) => {
