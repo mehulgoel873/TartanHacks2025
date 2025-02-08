@@ -50,6 +50,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         // Convert canvas to image
         canvas.toBlob((blob) => {
           console.log("Screenshot captured:", blob);
+          sendImage(blob);
           // You can now save the image or display it
         }, "image/png");
         url = canvas.toDataURL();
@@ -57,12 +58,36 @@ chrome.alarms.onAlarm.addListener((alarm) => {
           filename: "screenshot.png",
           url: url,
         }, () => {
+
           canvas.remove();
         })
       })
       .catch((error) => console.error("Error capturing frame:", error));
   };
 });
+
+function sendImage(blob) {
+  const formData = new FormData();
+  formData.append("screenshot", blob, "screenshot.png");
+
+  fetch("http://127.0.0.1:5000/upload", { // Replace with your API endpoint
+    method: "POST",
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => { console.log("Upload successful:", data); fetchServerData() })
+    .catch(error => console.error("Error uploading image:", error));
+}
+
+
+// Function to fetch data from the server automatically after each screenshot
+function fetchServerData() {
+  fetch("http://127.0.0.1:5000/status") // Replace with actual server endpoint
+    .then(response => response.json())
+    .then(data => console.log("Server Response:", data))
+    .catch(error => console.error("Error fetching data:", error));
+}
+
 
 document.getElementById("stop-capture").onclick = () => {
   console.log("STOPPED CAPTURE!")
