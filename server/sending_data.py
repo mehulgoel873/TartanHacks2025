@@ -1,7 +1,33 @@
 from openai import OpenAI
 from pydantic import BaseModel
+from preparing_data import *
+
 import json
 client = OpenAI()
+
+def process_image(image_path):
+    # Example image processing function: open and print the image size
+    print(f"Processing {image_path}")
+    
+
+
+
+def process_images_in_folder(folder_path, max_images=10):
+    supported_extensions = (".jpg", ".jpeg", ".png", ".bmp", ".gif")  # Add other image formats if needed
+    image_count = 0
+
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+
+        # Check if it's an image
+        if os.path.isfile(file_path) and filename.lower().endswith(supported_extensions):
+            process_image(file_path)
+            image_count += 1
+            
+            # Stop after processing the first max_images images
+            if image_count >= max_images:
+                break
+
 
 class ResponseEvent(BaseModel):
     isWorkingOnGoal: bool
@@ -49,6 +75,19 @@ def make_decision(user_act, user_goal):
     isWorkingonGoal = data["isWorkingOnGoal"]
     confidence = int(float(data["confidence"])*100)
 
+    return(response.choices[0].message.content)
+
+
+
+
+'''TESTING'''
+if __name__ == "__main__":
+    import os
+    from PIL import Image
+
+    # Replace with your folder path
+    folder_path = "./combined"
+    process_images_in_folder(folder_path)
     if (isWorkingonGoal):
         res = 0
     else:
