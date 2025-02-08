@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Server Interaction</title>
+    <script>
+        function fetchStatus() {
+            fetch("http://127.0.0.1:5000/status")  // Make GET request to Flask server
+                .then(response => response.json()) // Parse JSON response
+                .then(data => {
+                    document.getElementById("statusDisplay").innerText = "Server Status: " + data.status;
+                })
+                .catch(error => {
+                    document.getElementById("statusDisplay").innerText = "Error fetching status.";
+                    console.error("Error:", error);
+                });
+        }
+    </script>
+</head>
+<body>
+
+<h1>HELLO</h1>
+
+<!-- Upload Screenshot -->
+<form action="http://127.0.0.1:5000/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="screenshot" accept="image/png, image/jpeg">
+    <button type="submit">Upload Screenshot</button>
+</form>
+
+<!-- Fetch Status -->
+<button onclick="fetchStatus()">Check Server Status</button>
+
+<!-- Display Response -->
+<p id="statusDisplay">Server Status: Waiting for update...</p>
+
+</body>
+</html>
