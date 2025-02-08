@@ -72,22 +72,26 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 
 function callAction(status) {
     console.log("STATUS: " + status)
-    switch (status) {
-        case 0:
-            break;
-        case 1:
-            browser_notif_lock_in();
-            break;
-        case 2:
-            browser_notif_lock_in();
-            break;
-        case 3:
-            browser_notif_yells();
-            break;
-        case 4:
-            browser_notif_yells();
-            break;
-        default:
-            break;
-    }
+    chrome.storage.local.get(['toggle'], function (result) {
+        if (result.toggle) {
+            switch (status) {
+                case 0:
+                    break;
+                case 1:
+                    browser_notif_lock_in();
+                    break;
+                case 2:
+                    browser_notif_lock_in();
+                    break;
+                case 3:
+                    browser_notif_yells();
+                    break;
+                case 4:
+                    browser_notif_yells();
+                    break;
+                default:
+                    break;
+            }
+        }
+    });
 }
