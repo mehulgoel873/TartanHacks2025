@@ -7,7 +7,9 @@
     "desktopCapture",
     "tabs",
     "downloads",
-    "alarms"
+    "alarms",
+    "storage",
+    "offscreen"
   ],
   "background": {
     "service_worker": "background.js"

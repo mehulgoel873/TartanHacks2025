@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-from preparing_data import *
-from sending_data import *
 
 app = Flask(__name__)
 CORS(app)
@@ -29,12 +27,9 @@ def upload_screenshot():
     # Update status
 
     print("computing pt1")
-    img_txt = get_image_info("screenshot-python.png")
-    print(img_txt)
     print("done computing pt1")
 
     print("computing pt2")
-    current_status = make_decision(img_txt, user_data)
     print("done computing pt2")
 
 
@@ -54,4 +49,4 @@ def get_status():
     return jsonify(current_status)  # Send back the latest status
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0', port=5050)
