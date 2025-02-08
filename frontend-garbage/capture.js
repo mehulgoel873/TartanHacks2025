@@ -25,7 +25,7 @@ chrome.windows.getCurrent({}, (w) => {
 
                 chrome.alarms.create("screenshot-alarm", {
                   delayInMinutes: 0.0,
-                  periodInMinutes: 0.1,
+                  periodInMinutes: 1,
                 });
 
               })
@@ -73,12 +73,16 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   };
 });
 
+
 function sendUserInput(focus_data, distract_data) {
   const formData = new FormData();
   formData.append("focus", focus_data);
   formData.append("distract", distract_data);
 
-  fetch("http://127.0.0.1:5000/user_data", { // Replace with your API endpoint
+  console.log("focus_data: " + focus_data);
+  console.log("distract_data: " + distract_data);
+
+  fetch("http://voltron.lan.cmu.edu:5000/user_data", { // Replace with your API endpoint
     method: "POST",
     body: formData
   })
@@ -90,7 +94,7 @@ function sendImage(blob) {
   const formData = new FormData();
   formData.append("screenshot", blob, "screenshot.png");
 
-  fetch("http://127.0.0.1:5000/upload", { // Replace with your API endpoint
+  fetch("http://voltron.lan.cmu.edu:5000/upload", { // Replace with your API endpoint
     method: "POST",
     body: formData
   })
@@ -102,21 +106,24 @@ function sendImage(blob) {
 
 // Function to fetch data from the server automatically after each screenshot
 function fetchServerData() {
-  fetch("http://127.0.0.1:5000/status") // Replace with actual server endpoint
+  fetch("http://voltron.lan.cmu.edu:5000/status") // Replace with actual server endpoint
     .then(response => response.json())
-    .then(data => {console.log("Server Response:", data); callAction(data)})
+    .then(data => { console.log("Server Response:", data); callAction(data) })
     .catch(error => console.error("Error fetching data:", error));
 }
 
 
 function callAction(status) {
-  console.log("status!!")
-  console.log(status)
+  console.log("status!!");
+  console.log(status);
 }
 
 document.getElementById("submit").onclick = () => {
-  focus_text = console.log(document.getElementById("focus").value)
-  distract_text = console.log(document.getElementById("distract").value)
-  console.log("SUBMITTED USER DATA!")
+  var focus_text = document.getElementById("focus").value;
+  var distract_text = document.getElementById("distract").value;
+  sendUserInput(focus_text, distract_text);
+  console.log("SUBMITTED USER DATA!");
+  console.log(focus_text);
+  console.log(distract_text);
 
 }
