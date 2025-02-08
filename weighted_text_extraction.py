@@ -43,11 +43,9 @@ def extract_largest_text(image_path):
 
     # Define size thresholds
     large_text_threshold = median_height * 1.2  # Text 1.5x larger than median
-    small_text_threshold = median_height * 0.6  # Text 0.6x smaller than median
 
     # Filter text based on size
     large_text = []
-    small_text = []
     for i in range(len(data["text"])):
         if int(data["conf"][i]) > 50:  # Ignore low-confidence text
             text = data["text"][i].strip()
@@ -55,8 +53,6 @@ def extract_largest_text(image_path):
 
             if height >= large_text_threshold:
                 large_text.append(text)
-            elif height <= small_text_threshold:
-                small_text.append(text)
 
     # Print results
     return extract_real_words(large_text)
