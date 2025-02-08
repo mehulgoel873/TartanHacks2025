@@ -126,7 +126,7 @@ function browser_notif_lock_in() {
     console.log("Notification sent with ID:", notificationId);
   });
     // Play a sound
-    const audio = new Audio("../audios/mixkit-wrong-answer-fail-notification-946.mp3"); // Replace with the path to your audio file
+    const audio = new Audio("TartanHacks2025/frontend-garbage/audios/lock-in-audio.mp3"); // Replace with the path to your audio file
     audio.play().catch((error) => {
       console.error("Error playing sound:", error);
     });
@@ -144,7 +144,7 @@ function browser_notif_yells() {
       console.log("Notification sent with ID:", notificationId);
     });
       // Play a sound
-      const audio = new Audio("../audios/time_to_lock_in.mp3.mov"); // Replace with the path to your audio file
+      const audio = new Audio("../audios/mixkit-wrong-answer-fail-notification-946.mp3"); // Replace with the path to your audio file
       audio.play().catch((error) => {
         console.error("Error playing sound:", error);
       });
