@@ -1,8 +1,15 @@
 /* The switch - the box around the slider */
+:root {
+    --dark-blue: #486370;
+    --white-green: #DBE0CC;
+    --faint-teal: #7FB0A5;
+    --brown: #8C6D5D;
+}
+
 html,
 body {
-    min-width: 300px;
-    min-height: 430px;
+    min-width: 310px;
+    min-height: 440px;
     max-width: 300px;
     max-height: min-content;
     margin: 8px;
@@ -11,6 +18,8 @@ body {
 body {
     margin: auto;
     text-align: center;
+    background-color: var(--dark-blue);
+    color: var(--white-green);
 }
 
 
@@ -24,7 +33,7 @@ h1 {
 
 p {
     margin: 10px 0;
-    font-size: 18px;
+    font-size: 19px;
     font-family: "Zain", serif;
     font-weight: 400;
     line-height: 0.9;
@@ -37,34 +46,50 @@ textarea {
     min-height: 80px;
     padding: 12px;
     margin: 8px;
-    font-size: 18px;
+    font-size: 20px;
     font-family: "Zain", serif;
-    font-weight: 400;
+    font-weight: 600;
     line-height: 0.9;
-    color: #333;
-    background: #f9f9f9;
-    border: 1px solid #ccc;
+    color: var(--dark-blue);
+    border: 3px solid var(--faint-teal);
     border-radius: 8px;
     outline: none;
     transition: all 0.3s ease-in-out;
     resize: vertical;
+    background-color: #EDEFE6;
+}
+
+textarea:hover {
+    border-color: var(--brown);
+    background-color: #E7D3C5;
 }
 
 textarea:focus {
-    border-color: #007bff;
-    background: #fff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    border-color: var(--brown);
+    border-width: 3px;
+    background: #E7D3C5;
+    box-shadow: 0 0 20px rgba(140, 109, 93, 0.7);
+    color: #65432A;
 }
 
 textarea::placeholder {
-    color: #999;
+    color: var(--faint-teal);
     opacity: 0.7;
 }
 
+textarea:focus::placeholder {
+    color: var(--brown);
+    opacity: 0.7;
+}
+
+textarea:hover::placeholder {
+    border-color: var(--brown);
+    color: var(--brown);
+}
 
 /* Submit Button */
 button {
-    background-color: #007bff;
+    background-color: var(--faint-teal);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -79,7 +104,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #558B7F;
 }
 
 /* SWITCH */
@@ -106,7 +131,7 @@ button:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: #a9a9a9;
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -124,11 +149,11 @@ button:hover {
 }
 
 input:checked+.slider {
-    background-color: #2196F3;
+    background-color: #bdaa70;
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #bdaa70;
 }
 
 input:checked+.slider:before {
