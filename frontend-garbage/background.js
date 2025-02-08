@@ -28,22 +28,6 @@ async function createOffscreenDocument() {
         });
     }
 }
-
-async function playSound(source = 'default.wav', volume = 1) {
-    await createOffscreen();
-    console.log("created offscreen")
-    await chrome.runtime.sendMessage({ play: { source, volume } });
-}
-
-// Create the offscreen document if it doesn't already exist
-async function createOffscreen() {
-    await chrome.offscreen.createDocument({
-        url: 'offscreen-audio.html',
-        reasons: ['AUDIO_PLAYBACK'],
-        justification: 'testing' // details for using the API
-    });
-}
-
 async function browser_notif_lock_in() {
     chrome.notifications.create({
         type: "basic",
@@ -55,6 +39,7 @@ async function browser_notif_lock_in() {
         (notificationId) => {
             console.log("Notification sent with ID:", notificationId);
         });
+    chrome.runtime.sendMessage({ audio: "notif" });
 }
 
 function browser_notif_yells() {
@@ -68,6 +53,7 @@ function browser_notif_yells() {
         (notificationId) => {
             console.log("Notification sent with ID:", notificationId);
         });
+    chrome.runtime.sendMessage({ audio: "yell" });
 }
 
 chrome.action.onClicked.addListener(() => {
@@ -93,11 +79,10 @@ function callAction(status) {
             browser_notif_lock_in();
             break;
         case 2:
-            console.log("HERE");
             browser_notif_lock_in();
             break;
         case 3:
-            browser_notif_lock_in();
+            browser_notif_yells();
             break;
         case 4:
             browser_notif_yells();
