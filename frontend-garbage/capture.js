@@ -79,9 +79,6 @@ function sendUserInput(focus_data, distract_data) {
     formData.append("focus", focus_data);
     formData.append("distract", distract_data);
 
-    console.log("focus_data: " + focus_data);
-    console.log("distract_data: " + distract_data);
-
     fetch("http://voltron.lan.cmu.edu:5000/user_data", { // Replace with your API endpoint
         method: "POST",
         body: formData
@@ -90,6 +87,7 @@ function sendUserInput(focus_data, distract_data) {
         .then(data => console.log("Submit successful:", data))
         .catch(error => console.error("Error submitting data:", error));
 }
+
 function sendImage(blob) {
     const formData = new FormData();
     formData.append("screenshot", blob, "screenshot.png");
@@ -114,8 +112,22 @@ function fetchServerData() {
 
 
 function callAction(status) {
-    console.log("status!!");
-    console.log(status);
+    switch (status) {
+        case 0:
+            allGood();
+            break;
+        case 1:
+            smallNotif();
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+
+            break;
+        default:
+    }
 }
 
 document.getElementById("submit").onclick = () => {
