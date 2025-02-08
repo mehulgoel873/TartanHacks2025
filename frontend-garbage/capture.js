@@ -1,37 +1,44 @@
 let track;
 let imageCapture;
 
+var checkbox = document.querySelector("input[name=checkbox]");
+
 chrome.windows.getCurrent({}, (w) => {
   chrome.windows.update(w.id, { focused: true }, () => {
-    document.getElementById("capture").onclick = () => {
-      const sources = ["screen", "window", "tab"];
-      chrome.tabs.getCurrent((tab) => {
-        chrome.desktopCapture.chooseDesktopMedia(sources, tab, (streamId) => {
-          navigator.mediaDevices
-            .getUserMedia({
-              video: {
-                mandatory: {
-                  chromeMediaSource: "desktop",
-                  chromeMediaSourceId: streamId,
+    checkbox.addEventListener('change', function () {
+      if (this.checked) {
+        const sources = ["screen", "window", "tab"];
+        chrome.tabs.getCurrent((tab) => {
+          chrome.desktopCapture.chooseDesktopMedia(sources, tab, (streamId) => {
+            navigator.mediaDevices
+              .getUserMedia({
+                video: {
+                  mandatory: {
+                    chromeMediaSource: "desktop",
+                    chromeMediaSourceId: streamId,
+                  },
                 },
-              },
-            })
-            .then((stream) => {
-              track = stream.getVideoTracks()[0];
-              imageCapture = new ImageCapture(track); // Correct capitalization
+              })
+              .then((stream) => {
+                track = stream.getVideoTracks()[0];
+                imageCapture = new ImageCapture(track); // Correct capitalization
 
-              chrome.alarms.create("screenshot-alarm", {
-                delayInMinutes: 0.0,
-                periodInMinutes: 0.1,
+                chrome.alarms.create("screenshot-alarm", {
+                  delayInMinutes: 0.0,
+                  periodInMinutes: 0.1,
+                });
+
+              })
+              .catch((err) => {
+                console.log(err);
               });
-
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          });
         });
-      });
-    };
+      } else {
+        console.log("STOPPED CAPTURE!")
+        chrome.alarms.clearAll();
+      }
+    });
   });
 });
 
@@ -86,10 +93,4 @@ function fetchServerData() {
     .then(response => response.json())
     .then(data => console.log("Server Response:", data))
     .catch(error => console.error("Error fetching data:", error));
-}
-
-
-document.getElementById("stop-capture").onclick = () => {
-  console.log("STOPPED CAPTURE!")
-  chrome.alarms.clearAll();
 }

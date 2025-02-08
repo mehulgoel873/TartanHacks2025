@@ -2,16 +2,25 @@
 <html lang="en">
 
 <head>
+    <title>APP YELLER</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capture Screenshot</title>
+    <meta name="viewport" content="width=300px, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <h1>Welcome!</h1>
-    <p>Click the button below to capture your screen.</p>
-    <button id="capture">Capture Screenshot</button>
-    <button id="stop-capture">Stop Taking Screenshots!!!</button>
+    <h1>lighthouse</h1>
+    <p>Toggle to start measuring your productivity.</p>
+    <label class="switch">
+        <input type="checkbox" name="checkbox" />
+        <span class="slider round"></span>
+    </label>
+    <textarea id="focus" name="focus" rows="4" cols="40">What do you want to focus on?</textarea>
+    <textarea id="distract" name="distract" rows="4" cols="40">What don't you want to focus on?</textarea>
+    <button id="submit" type="submit">Submit</button>
     <script src="capture.js"></script>
 </body>
 
