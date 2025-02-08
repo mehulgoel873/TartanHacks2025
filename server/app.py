@@ -41,6 +41,7 @@ def get_user_data():
     focus_data = request.form.get("focus")
     distract_data = request.form.get("distract")
     user_data = [focus_data, distract_data]
+    print(user_data)
 
     return jsonify({"message": "Recieved User Data"}), 200
 
