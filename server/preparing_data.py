@@ -1,8 +1,31 @@
+'''Documentation: This file is the step 2 of the process. We convert the image into usable user data
+   along with text in the image.'''
+
 from PIL import Image
 import pytesseract
 import cv2
 import re
 import numpy as np
+import time
+last_time = time.time()
+from pathlib import Path
+from typing import Literal
+from pydantic import BaseModel
+from ollama import chat
+
+# class definitions
+# Define the schema for image objects
+class Object(BaseModel):
+  name: str
+  confidence: float
+  attributes: str
+
+
+class ImageDescription(BaseModel):
+  summary: str
+  website: str 
+  objects: list[Object]
+  text_content: str | None = None
 
 def extract_real_words(words):
     return [word for word in words if len(word) > 1 and re.search(r'[a-zA-Z]', word)]
@@ -43,9 +66,11 @@ def extract_largest_text(image_path):
 
     # Define size thresholds
     large_text_threshold = median_height * 1.2  # Text 1.5x larger than median
+    small_text_threshold = median_height * 0.6  # Text 0.6x smaller than median
 
     # Filter text based on size
     large_text = []
+    small_text = []
     for i in range(len(data["text"])):
         if int(data["conf"][i]) > 50:  # Ignore low-confidence text
             text = data["text"][i].strip()
@@ -53,10 +78,11 @@ def extract_largest_text(image_path):
 
             if height >= large_text_threshold:
                 large_text.append(text)
+            elif height <= small_text_threshold:
+                small_text.append(text)
 
     # Print results
     return extract_real_words(large_text)
-
 
 def extract_center_text(image_path):
     image = cv2.imread(image_path)
@@ -88,19 +114,54 @@ def extract_center_text(image_path):
     # Print relevant text
     return extract_real_words(relevant_text)
 
+def get_image_text(image_path):
+    '''Input: image_path is the relative path to the image
+       Return: It returns a list of keywords that have appeared in the screenshot'''
+    
+    keywords = extract_center_text(image_path)
+    return keywords
+    
+def get_ollama_summary(image_path):
+    '''Input: image_path is the relative path to the image
+       Return: It returns a json summarizing the image and its attributes'''
+    # raise error if not valid path
+    path = Path(image_path)
+    if not path.exists():
+      raise FileNotFoundError(f'Image not found at: {image_path}')
+    
+    response = chat(
+    model='llama3.2-vision',
+    format=ImageDescription.model_json_schema(),  # Pass in the schema for the response
+    messages=[
+        {
+        'role': 'user',
+        'content': 'Analyze this image and return a detailed JSON description including website or app used, objects, and any text detected. If you cannot determine certain details, leave those fields empty.',
+        'images': [path],
+        },
+    ],
+    options={'temperature': 0},  # Set temperature to 0 for more deterministic output
+    )
 
+    # Convert received content to the schema
+    image_analysis = ImageDescription.model_validate_json(response.message.content)
+    return image_analysis
+    
 
-# Example usage
-if __name__ == "__main__":
-    screenshot_path = "TartanHacks2025/images/image-2.png"  # Replace with your screenshot file path
-    try:
-        result_all = extract_all_text(screenshot_path)
-        print("All Text:", result_all)
-        print()
-        result_size = extract_largest_text(screenshot_path)
-        print("Largest Text:", result_size)
-        print()
-        result_loc = extract_center_text(screenshot_path)
-        print("Centered Text:", result_loc)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+def get_image_info(image_path):
+    '''Input: image_text is the result from get_image_text
+              ollama_summary is the result from get_ollama_summary
+       Return: It returns a 3-tuple containing the three parsed strings input corresponding to the image'''
+    image_text = get_image_text(image_path)
+    ollama_summary = get_ollama_summary(image_path)
+   
+    summary = ollama_summary.summary + " " + ollama_summary.text_content
+    website = ollama_summary.website
+
+    for i in range(len(ollama_summary.objects)):
+        curr_object = (ollama_summary.objects)[i]
+        curr_name = curr_object.name
+        curr_attribute = curr_object.attributes
+        summary += f"It contains an object {curr_name} with attribute {curr_attribute}. "
+   
+    return (website, summary, image_text)
+    
