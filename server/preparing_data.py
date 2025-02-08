@@ -11,7 +11,10 @@ last_time = time.time()
 from pathlib import Path
 from typing import Literal
 from pydantic import BaseModel
-from ollama import chat
+# from ollama import chat
+from openai import OpenAI
+import base64
+import json
 
 # class definitions
 # Define the schema for image objects
@@ -19,7 +22,6 @@ class Object(BaseModel):
   name: str
   confidence: float
   attributes: str
-
 
 class ImageDescription(BaseModel):
   summary: str
@@ -145,23 +147,75 @@ def get_ollama_summary(image_path):
     # Convert received content to the schema
     image_analysis = ImageDescription.model_validate_json(response.message.content)
     return image_analysis
+
+def encode_image(image_path):
+    """Encodes an image to base64."""
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+def get_open_ai_summary(image_path):
+    '''Input: image_path is the relative path to the image
+       Return: It returns a json summarizing the image and its attributes'''
+    # raise error if not valid path
+    path = Path(image_path)
+    if not path.exists():
+      raise FileNotFoundError(f'Image not found at: {image_path}')
+    
+    client = OpenAI()
+
+    base64_image = encode_image(image_path)
+    response = client.chat.completions.create(
+        model="gpt-4o-2024-08-06", 
+        messages = 
+        [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text", 
+                        "text": "Analyze this image and return a detailed JSON description including website or app used as well as a summary of the activity on the screen. If you cannot determine certain details, leave those fields empty."
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}"
+                        }
+                    }
+                ]
+            }
+        ],
+        response_format={
+           'type': 'json_schema',
+           'json_schema': 
+              {
+                "name":"team-cool", 
+                "schema": ImageDescription.model_json_schema()
+              } 
+         }
+    )
+    # print(response.choices[0].message.content)
+    # print(type(response.choices[0].message.content))
+    data = json.loads(response.choices[0].message.content)
+    return data
     
 
 def get_image_info(image_path):
     '''Input: image_text is the result from get_image_text
               ollama_summary is the result from get_ollama_summary
-       Return: It returns a 3-tuple containing the three parsed strings input corresponding to the image'''
+       Return: It returns a 3-tuple containing the three parsed strings input corresponding to the image
+    
+       Relies on openai summary
+    '''
     image_text = get_image_text(image_path)
-    ollama_summary = get_ollama_summary(image_path)
-   
-    summary = ollama_summary.summary + " " + ollama_summary.text_content
-    website = ollama_summary.website
+    summary_object = get_open_ai_summary(image_path)
+    # print(summary_object)
+    summary = summary_object["summary"] + " " + summary_object["text_content"]
+    website = summary_object["website"]
 
-    for i in range(len(ollama_summary.objects)):
-        curr_object = (ollama_summary.objects)[i]
-        curr_name = curr_object.name
-        curr_attribute = curr_object.attributes
+    for i in range(len(summary_object["objects"])):
+        curr_object = (summary_object["objects"])[i]
+        curr_name = curr_object["name"]
+        curr_attribute = curr_object["attributes"]
         summary += f"It contains an object {curr_name} with attribute {curr_attribute}. "
    
     return (website, summary, image_text)
-    
