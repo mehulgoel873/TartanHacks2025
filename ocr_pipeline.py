@@ -51,9 +51,9 @@ def describe_screenshot_with_gpt(image_path: str, prompt: str):
 
 # Example usage
 if __name__ == "__main__":
-    screenshot_path = "images/educational.png"  # Replace with your screenshot file path
+    screenshot_path = "images/image-2.png"  # Replace with your screenshot file path
     user_prompt = "This is a screenshot. Describe what is happening on this window. Specify what app/website is being used, as well as what the user is doing."
-    
+
     try:
         result = describe_screenshot_with_gpt(screenshot_path, user_prompt)
         print("Generated Description:", result)
