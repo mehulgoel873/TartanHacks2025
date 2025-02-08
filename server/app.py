@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
+from preparing_data import *
+from sending_data import *
 
 app = Flask(__name__)
 CORS(app)
 
 # Store the latest status (this will be sent via GET)
 
-current_status = 0
+class Data:
+    current_status = 0
 user_data = ["Productivity", "Social Media"]
 
 @app.route('/upload', methods=['POST'])
@@ -27,9 +30,13 @@ def upload_screenshot():
     # Update status
 
     print("computing pt1")
+    img_txt = get_image_info("screenshot-python.png")
+    print(img_txt)
     print("done computing pt1")
 
     print("computing pt2")
+    Data.current_status = make_decision(img_txt, user_data)
+    print("satus: ", Data.current_status, id(Data.current_status))
     print("done computing pt2")
 
 
@@ -47,7 +54,8 @@ def get_user_data():
 
 @app.route('/status', methods=['GET'])
 def get_status():
-    return jsonify(current_status)  # Send back the latest status
+    print("GIVING: ", Data.current_status, id(Data.current_status))
+    return jsonify(Data.current_status)  # Send back the latest status
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5050)
