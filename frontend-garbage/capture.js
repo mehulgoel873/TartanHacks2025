@@ -1,6 +1,10 @@
 let track;
 let imageCapture;
 
+// var server_path = "http://voltron.lan.cmu.edu:5000";
+var server_path = "http://127.0.0.1:5050";
+
+
 var checkbox = document.querySelector("input[name=checkbox]");
 
 chrome.windows.getCurrent({}, (w) => {
@@ -79,7 +83,7 @@ function sendUserInput(focus_data, distract_data) {
     formData.append("focus", focus_data);
     formData.append("distract", distract_data);
 
-    fetch("http://voltron.lan.cmu.edu:5000/user_data", { // Replace with your API endpoint
+    fetch(server_path + "/user_data", { // Replace with your API endpoint
         method: "POST",
         body: formData
     })
@@ -92,7 +96,7 @@ function sendImage(blob) {
     const formData = new FormData();
     formData.append("screenshot", blob, "screenshot.png");
 
-    fetch("http://voltron.lan.cmu.edu:5000/upload", { // Replace with your API endpoint
+    fetch(server_path + "/upload", { // Replace with your API endpoint
         method: "POST",
         body: formData
     })
@@ -104,29 +108,69 @@ function sendImage(blob) {
 
 // Function to fetch data from the server automatically after each screenshot
 function fetchServerData() {
-    fetch("http://voltron.lan.cmu.edu:5000/status") // Replace with actual server endpoint
+    fetch(server_path + "/status") // Replace with actual server endpoint
         .then(response => response.json())
         .then(data => { console.log("Server Response:", data); callAction(data) })
         .catch(error => console.error("Error fetching data:", error));
 }
 
 
+function browser_notif_lock_in() {
+    chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icon.png", // Replace with the path to your notification icon
+        title: "LOCK BACK IN PLEASE",
+        message: "LOCK IN LOCK LOCK IN LOCK IN",
+        priority: 2
+    },
+        (notificationId) => {
+            console.log("Notification sent with ID:", notificationId);
+        });
+    // Play a sound
+    const audio = new Audio("../audios/mixkit-wrong-answer-fail-notification-946.mp3"); // Replace with the path to your audio file
+    audio.play().catch((error) => {
+        console.error("Error playing sound:", error);
+    });
+}
+
+
+function browser_notif_yells() {
+    chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icon.png", // Replace with the path to your notification icon
+        title: "ITS TIME TO LOCK IN!!!",
+        message: "LOCK IN LOCK LOCK IN LOCK IN",
+        priority: 2
+    },
+        (notificationId) => {
+            console.log("Notification sent with ID:", notificationId);
+        });
+    // Play a sound
+    const audio = new Audio("../audios/time_to_lock_in.mp3.mov"); // Replace with the path to your audio file
+    audio.play().catch((error) => {
+        console.error("Error playing sound:", error);
+    });
+}
+
+
 function callAction(status) {
     switch (status) {
         case 0:
-            allGood();
             break;
         case 1:
-            smallNotif();
+            browser_notif_lock_in();
             break;
         case 2:
+            browser_notif_lock_in();
             break;
         case 3:
+            browser_notif_lock_in();
             break;
         case 4:
-
+            browser_notif_yells();
             break;
         default:
+            break;
     }
 }
 
@@ -137,5 +181,4 @@ document.getElementById("submit").onclick = () => {
     console.log("SUBMITTED USER DATA!");
     console.log(focus_text);
     console.log(distract_text);
-
 }
