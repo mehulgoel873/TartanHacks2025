@@ -147,11 +147,13 @@ def get_ollama_summary(image_path):
     return image_analysis
     
 
-def get_image_info(image_text, ollama_summary):
+def get_image_info(image_path):
     '''Input: image_text is the result from get_image_text
               ollama_summary is the result from get_ollama_summary
        Return: It returns a 3-tuple containing the three parsed strings input corresponding to the image'''
-    
+    image_text = get_image_text(image_path)
+    ollama_summary = get_ollama_summary(image_path)
+   
     summary = ollama_summary.summary + " " + ollama_summary.text_context
     website = ollama_summary.website
 
