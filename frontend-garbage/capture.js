@@ -66,6 +66,19 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   };
 });
 
+function sendUserInput(focus_data, distract_data) {
+  const formData = new FormData();
+  formData.append("focus", focus_data);
+  formData.append("distract", distract_data);
+
+  fetch("http://127.0.0.1:5000/user_data", { // Replace with your API endpoint
+    method: "POST",
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => console.log("Submit successful:", data))
+    .catch(error => console.error("Error submitting data:", error));
+}
 function sendImage(blob) {
   const formData = new FormData();
   formData.append("screenshot", blob, "screenshot.png");
@@ -84,10 +97,27 @@ function sendImage(blob) {
 function fetchServerData() {
   fetch("http://127.0.0.1:5000/status") // Replace with actual server endpoint
     .then(response => response.json())
-    .then(data => console.log("Server Response:", data))
+    .then(data => {console.log("Server Response:", data); callAction(data)})
     .catch(error => console.error("Error fetching data:", error));
 }
 
+
+function callAction(status) {
+  console.log("status!!")
+  console.log(status)
+}
+
+document.getElementById("stop-capture").onclick = () => {
+  console.log("STOPPED CAPTURE!")
+  chrome.alarms.clearAll();
+}
+
+document.getElementById("submit").onclick = () => {
+  focus_text = console.log(document.getElementById("focus").value)
+  distract_text = console.log(document.getElementById("distract").value)
+  console.log("SUBMITTED USER DATA!")
+
+}
 
 document.getElementById("stop-capture").onclick = () => {
   console.log("STOPPED CAPTURE!")

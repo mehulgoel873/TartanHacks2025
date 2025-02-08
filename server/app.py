@@ -29,11 +29,20 @@ def upload_screenshot():
 
     # Save the file
     file.save("screenshot-python.png")
-    
+
     # Update status
     current_status = {"status": "Screenshot received"}
 
     return jsonify({"message": "Screenshot uploaded successfully"}), 200
+
+@app.route('/user_data', methods=['POST'])
+def get_user_data():
+
+    focus_data = request.form.get("focus")
+    distract_data = request.form.get("distract")
+    user_data = [focus_data, distract_data]
+
+    return jsonify({"message": "Recieved User Data"}), 200
 
 @app.route('/status', methods=['GET'])
 def get_status():
