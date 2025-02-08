@@ -103,7 +103,7 @@ def make_decision(user_act, user_goal):
     
     data = json.loads(response.choices[0].message.content)
     isWorkingonGoal = data["isWorkingOnGoal"]
-    confidence = float(data["confidenceWorkingOnGoal"])
+    confidence = data["confidenceWorkingOnGoal"]
 
     # if (isWorkingonGoal):
     #     res = 0
