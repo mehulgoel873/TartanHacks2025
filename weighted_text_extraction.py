@@ -20,6 +20,7 @@ def extract_all_text(image_path: str):
 
     # Step 3: Extract text from the image using OCR (Tesseract)
     extracted_text = pytesseract.image_to_string(image)
+    return extracted_text
 
 def extract_largest_text(image_path):
     # Load the image
@@ -64,7 +65,7 @@ def extract_largest_text(image_path):
 
 # Example usage
 if __name__ == "__main__":
-    screenshot_path = "images/image-2.png"  # Replace with your screenshot file path
+    screenshot_path = "TartanHacks2025/images/image-2.png"  # Replace with your screenshot file path
     try:
         result_all = extract_all_text(screenshot_path)
         print("Generated Description:", result_all)
