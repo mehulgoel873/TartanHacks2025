@@ -168,7 +168,7 @@ function callAction(status) {
       browser_notif_yells();
       break;
     default:
-      browser_notif_yells();
+      break;
   }
 }
 
