@@ -154,7 +154,7 @@ def get_image_info(image_path):
     image_text = get_image_text(image_path)
     ollama_summary = get_ollama_summary(image_path)
    
-    summary = ollama_summary.summary + " " + ollama_summary.text_context
+    summary = ollama_summary.summary + " " + ollama_summary.text_content
     website = ollama_summary.website
 
     for i in range(len(ollama_summary.objects)):
