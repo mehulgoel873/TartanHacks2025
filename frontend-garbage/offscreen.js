@@ -68,6 +68,24 @@ function browser_notif_lock_in() {
             console.log("Notification sent with ID:", notificationId);
         });
     // Play a sound
+    const audio = new Audio("TartanHacks2025/frontend-garbage/audios/lock-in-audio.mp3"); // Replace with the path to your audio file
+    audio.play().catch((error) => {
+        console.error("Error playing sound:", error);
+    });
+}
+
+function browser_notif_yells() {
+    chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icon.png", // Replace with the path to your notification icon
+        title: "ITS TIME TO LOCK IN!!!",
+        message: "LOCK IN LOCK LOCK IN LOCK IN",
+        priority: 2
+    },
+        (notificationId) => {
+            console.log("Notification sent with ID:", notificationId);
+        });
+    // Play a sound
     const audio = new Audio("../audios/mixkit-wrong-answer-fail-notification-946.mp3"); // Replace with the path to your audio file
     audio.play().catch((error) => {
         console.error("Error playing sound:", error);
