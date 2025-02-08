@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "APP YELLER",
+  "name": "lighthouse",
   "version": "1.0",
-  "description": "YELL",
+  "description": "Let the light guide you.",
   "permissions": [
     "desktopCapture",
     "tabs",
