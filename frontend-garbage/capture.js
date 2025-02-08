@@ -1,6 +1,10 @@
 let track;
 let imageCapture;
 
+// var server_path = "http://voltron.lan.cmu.edu:5000";
+var server_path = "http://127.0.0.1:5050";
+
+
 var checkbox = document.querySelector("input[name=checkbox]");
 
 chrome.windows.getCurrent({}, (w) => {
@@ -79,7 +83,7 @@ function sendUserInput(focus_data, distract_data) {
   formData.append("focus", focus_data);
   formData.append("distract", distract_data);
 
-  fetch("http://voltron.lan.cmu.edu:5000/user_data", { // Replace with your API endpoint
+  fetch(server_path + "/user_data", { // Replace with your API endpoint
     method: "POST",
     body: formData
   })
@@ -92,7 +96,7 @@ function sendImage(blob) {
   const formData = new FormData();
   formData.append("screenshot", blob, "screenshot.png");
 
-  fetch("http://voltron.lan.cmu.edu:5000/upload", { // Replace with your API endpoint
+  fetch(server_path + "/upload", { // Replace with your API endpoint
     method: "POST",
     body: formData
   })
@@ -104,7 +108,7 @@ function sendImage(blob) {
 
 // Function to fetch data from the server automatically after each screenshot
 function fetchServerData() {
-  fetch("http://voltron.lan.cmu.edu:5000/status") // Replace with actual server endpoint
+  fetch(server_path + "/status") // Replace with actual server endpoint
     .then(response => response.json())
     .then(data => { console.log("Server Response:", data); callAction(data) })
     .catch(error => console.error("Error fetching data:", error));
