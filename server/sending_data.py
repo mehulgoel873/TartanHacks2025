@@ -2,6 +2,7 @@ from openai import OpenAI
 from pydantic import BaseModel
 from preparing_data import *
 
+import json
 client = OpenAI()
 
 def process_image(image_path):
@@ -39,7 +40,7 @@ def make_decision(user_act, user_goal):
         user_goal:= a list containing two strings:[desired behaviour, activities to avoid]
 
         OUTPUT:
-        tuple containing the following data: (isWorkingonGoal: bool, confidence: float)
+        A number denoting whether the user was working on their goal along with a confidence interval.
     '''
     
     working_on_goal = user_goal[0]
@@ -69,7 +70,10 @@ def make_decision(user_act, user_goal):
               }
          }
         
-    )
+    )   
+    data = json.loads(response.choices[0].message.content)
+    isWorkingonGoal = data["isWorkingOnGoal"]
+    confidence = int(float(data["confidence"])*100)
 
     return(response.choices[0].message.content)
 
@@ -84,3 +88,15 @@ if __name__ == "__main__":
     # Replace with your folder path
     folder_path = "./combined"
     process_images_in_folder(folder_path)
+    if (isWorkingonGoal):
+        res = 0
+    else:
+        if (confidence >= 75):
+            res = 1
+        elif (confidence < 75 and confidence >= 50):
+            res = 2
+        elif (confidence < 50 and confidence >=25):
+            res = 3
+        else:
+            res = 4
+    return(res)
