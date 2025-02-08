@@ -119,7 +119,7 @@ function browser_notif_lock_in() {
   chrome.notifications.create({
     type: "basic",
     iconUrl: "icon.png", // Replace with the path to your notification icon
-    title: "LOCK BACK IN COME ON",
+    title: "LOCK BACK IN PLEASE",
     message: "LOCK IN LOCK LOCK IN LOCK IN",
     priority: 2}, 
   (notificationId) => {
