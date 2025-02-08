@@ -92,7 +92,7 @@ def extract_center_text(image_path):
 
 # Example usage
 if __name__ == "__main__":
-    screenshot_path = "images/cat.png"  # Replace with your screenshot file path
+    screenshot_path = "TartanHacks2025/images/image-2.png"  # Replace with your screenshot file path
     try:
         result_all = extract_all_text(screenshot_path)
         print("All Text:", result_all)
