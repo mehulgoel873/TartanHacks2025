@@ -31,7 +31,7 @@ async function createOffscreenDocument() {
 async function browser_notif_lock_in() {
     chrome.notifications.create({
         type: "basic",
-        iconUrl: "icon.png", // Replace with the path to your notification icon
+        iconUrl: "lighthouse-128.png", // Replace with the path to your notification icon
         title: "LOCK BACK IN PLEASE",
         message: "LOCK IN LOCK LOCK IN LOCK IN",
         priority: 2
@@ -45,7 +45,7 @@ async function browser_notif_lock_in() {
 function browser_notif_yells() {
     chrome.notifications.create({
         type: "basic",
-        iconUrl: "icon.png", // Replace with the path to your notification icon
+        iconUrl: "lighthouse-128.png", // Replace with the path to your notification icon
         title: "ITS TIME TO LOCK IN!!!",
         message: "LOCK IN LOCK LOCK IN LOCK IN",
         priority: 2
