@@ -104,7 +104,7 @@ function sendImage(blob) {
 function fetchServerData() {
   fetch("http://127.0.0.1:5000/status") // Replace with actual server endpoint
     .then(response => response.json())
-    .then(data => {console.log("Server Response:", data); callAction(data)})
+    .then(data => { console.log("Server Response:", data); callAction(data) })
     .catch(error => console.error("Error fetching data:", error));
 }
 
