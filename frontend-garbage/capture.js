@@ -115,11 +115,11 @@ function fetchServerData() {
 }
 
 
-function browser_notif() {
+function browser_notif_lock_in() {
   chrome.notifications.create({
     type: "basic",
     iconUrl: "icon.png", // Replace with the path to your notification icon
-    title: "LOCK BACK IN COME ON",
+    title: "LOCK BACK IN PLEASE",
     message: "LOCK IN LOCK LOCK IN LOCK IN",
     priority: 2}, 
   (notificationId) => {
@@ -131,26 +131,44 @@ function browser_notif() {
       console.error("Error playing sound:", error);
     });
   }
+
+
+function browser_notif_yells() {
+    chrome.notifications.create({
+      type: "basic",
+      iconUrl: "icon.png", // Replace with the path to your notification icon
+      title: "ITS TIME TO LOCK IN!!!",
+      message: "LOCK IN LOCK LOCK IN LOCK IN",
+      priority: 2}, 
+    (notificationId) => {
+      console.log("Notification sent with ID:", notificationId);
+    });
+      // Play a sound
+      const audio = new Audio("../audios/time_to_lock_in.mp3.mov"); // Replace with the path to your audio file
+      audio.play().catch((error) => {
+        console.error("Error playing sound:", error);
+      });
+    }
   
 
 function callAction(status) {
   switch (status) {
     case 0:
-      browser_notif();
       break;
     case 1:
-      browser_notif();
+      browser_notif_lock_in();
       break;
     case 2:
-      browser_notif();
+      browser_notif_lock_in();
       break;
     case 3:
-      browser_notif();
+      browser_notif_lock_in();
       break;
     case 4:
+      browser_notif_yells();
       break;
     default:
-
+      break;
   }
 }
 
