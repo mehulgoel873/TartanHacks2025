@@ -1,14 +1,23 @@
-console.log("background running")
+console.log("running background")
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("got message")
     if (message.action === "capture_screen") {
         console.log("capturing screen")
-        captureScreen();
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs.length === 0) {
+                console.error("No active tab found.");
+                return;
+            }
+            chrome.scripting.executeScript({
+                target: { tabId: tabs[0].id },
+                function: captureScreen
+            });
+        });
     }
 });
 
-// Function to initiate screen capture
+// Screen capture logic moved to content script context
 function captureScreen() {
+    console.log("called capture screen")
     chrome.desktopCapture.chooseDesktopMedia(["screen", "window"], null, (streamId) => {
         if (!streamId) {
             console.error("Failed to get screen stream.");
@@ -18,45 +27,32 @@ function captureScreen() {
         navigator.mediaDevices.getUserMedia({
             video: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: streamId } }
         }).then(stream => {
-            processVideoStream(stream);
+            let track = stream.getVideoTracks()[0];
+            let imageCapture = new ImageCapture(track);
+
+            imageCapture.grabFrame().then(bitmap => {
+                track.stop(); // Stop the stream after getting a frame
+                processCapturedImage(bitmap);
+            }).catch(err => {
+                console.error("Error capturing screenshot:", err);
+            });
         }).catch(err => {
-            console.error("Error capturing screen:", err);
+            console.error("Error accessing screen:", err);
         });
     });
 }
 
-// Function to process the video stream and extract an image
-function processVideoStream(stream) {
-    let video = document.createElement("video");
-    video.srcObject = stream;
-    video.onloadedmetadata = () => {
-        video.play();
-        setTimeout(() => {
-            let canvas = document.createElement("canvas");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            let ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            let imageUrl = canvas.toDataURL("image/png");
+function processCapturedImage(bitmap) {
+    let canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
 
-            // Stop the stream
-            stream.getTracks().forEach(track => track.stop());
-
-            // Process the image (save or modify this function)
-            processCapturedImage(imageUrl);
-        }, 500);
-    };
-}
-
-// Function to handle the captured image
-function processCapturedImage(imageUrl) {
-    console.log("Image captured:", imageUrl);
-
-    // For now, save the image locally
+    let imageUrl = canvas.toDataURL("image/png");
     saveImageLocally(imageUrl);
 }
 
-// Function to save the image locally
 function saveImageLocally(imageUrl) {
     let link = document.createElement("a");
     link.href = imageUrl;

@@ -1,7 +1,7 @@
-console.log("popup js loaded")
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("capture").addEventListener("click", () => {
-      console.log("clicked sending message")
-      chrome.runtime.sendMessage({ action: "capture_screen" });
-  });
-});
+const createDate = {
+  url: "desktopCapture.html",
+  type: "popup",
+  width: 800,
+  height: 600
+};
+chrome.windows.create(createDate);
