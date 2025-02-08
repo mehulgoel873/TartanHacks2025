@@ -193,8 +193,6 @@ def get_open_ai_summary(image_path):
               } 
          }
     )
-    # print(response.choices[0].message.content)
-    # print(type(response.choices[0].message.content))
     data = json.loads(response.choices[0].message.content)
     return data
     
@@ -208,8 +206,12 @@ def get_image_info(image_path):
     '''
     image_text = get_image_text(image_path)
     summary_object = get_open_ai_summary(image_path)
-    # print(summary_object)
-    summary = summary_object["summary"] + " " + summary_object["text_content"]
+
+    summary = ""
+    if summary_object["summary"]!=None:
+        summary += summary_object["summary"]
+    if summary_object["text_content"]!=None:
+        summary += " " + summary_object["text_content"] 
     website = summary_object["website"]
 
     for i in range(len(summary_object["objects"])):
