@@ -7,74 +7,32 @@ var server_path = "http://127.0.0.1:5050";
 
 var checkbox = document.querySelector("input[name=checkbox]");
 
+document.addEventListener("DOMContentLoaded", async function () {
+  const checkbox = document.querySelector("input[type='checkbox']");
+
+  // Set the checkbox to checked
+  console.log(chrome.storage.local.get("toggle"))
+  chrome.storage.local.get(['toggle'], function (result) {
+    console.log(result.toggle);
+    checkbox.checked = result.toggle;
+  });
+
+  // Set the checkbox to unchecked
+  // checkbox.checked = false;
+});
+
 chrome.windows.getCurrent({}, (w) => {
   chrome.windows.update(w.id, { focused: true }, () => {
     checkbox.addEventListener('change', function () {
       if (this.checked) {
-        const sources = ["screen", "window", "tab"];
-        chrome.tabs.getCurrent((tab) => {
-          chrome.desktopCapture.chooseDesktopMedia(sources, tab, (streamId) => {
-            navigator.mediaDevices
-              .getUserMedia({
-                video: {
-                  mandatory: {
-                    chromeMediaSource: "desktop",
-                    chromeMediaSourceId: streamId,
-                  },
-                },
-              })
-              .then((stream) => {
-                track = stream.getVideoTracks()[0];
-                imageCapture = new ImageCapture(track); // Correct capitalization
-
-                chrome.alarms.create("screenshot-alarm", {
-                  delayInMinutes: 0.0,
-                  periodInMinutes: 1,
-                });
-
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          });
-        });
+        chrome.runtime.sendMessage({ action: "start-capturing" });
+        chrome.storage.local.set({ toggle: true })
       } else {
-        console.log("STOPPED CAPTURE!")
-        chrome.alarms.clearAll();
+        chrome.runtime.sendMessage({ action: "stop-capturing" });
+        chrome.storage.local.set({ toggle: false })
       }
     });
   });
-});
-
-chrome.alarms.onAlarm.addListener((alarm) => {
-  console.log("Alarm Rang: " + alarm.name);
-
-  if (alarm.name === "screenshot-alarm" && imageCapture) {
-    imageCapture.grabFrame()
-      .then((bitmap) => {
-        const canvas = document.createElement("canvas");
-        canvas.width = bitmap.width;
-        canvas.height = bitmap.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-
-        // Convert canvas to image
-        canvas.toBlob((blob) => {
-          console.log("Screenshot captured:", blob);
-          sendImage(blob);
-          // You can now save the image or display it
-        }, "image/png");
-        url = canvas.toDataURL();
-        chrome.downloads.download({
-          filename: "screenshot.png",
-          url: url,
-        }, () => {
-
-          canvas.remove();
-        })
-      })
-      .catch((error) => console.error("Error capturing frame:", error));
-  };
 });
 
 
@@ -92,48 +50,6 @@ function sendUserInput(focus_data, distract_data) {
     .catch(error => console.error("Error submitting data:", error));
 }
 
-function sendImage(blob) {
-  const formData = new FormData();
-  formData.append("screenshot", blob, "screenshot.png");
-
-  fetch(server_path + "/upload", { // Replace with your API endpoint
-    method: "POST",
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => { console.log("Upload successful:", data); fetchServerData() })
-    .catch(error => console.error("Error uploading image:", error));
-}
-
-
-// Function to fetch data from the server automatically after each screenshot
-function fetchServerData() {
-  fetch(server_path + "/status") // Replace with actual server endpoint
-    .then(response => response.json())
-    .then(data => { console.log("Server Response:", data); callAction(data) })
-    .catch(error => console.error("Error fetching data:", error));
-}
-
-
-function callAction(status) {
-  switch (status) {
-    case 0:
-      allGood();
-      break;
-    case 1:
-      smallNotif();
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-    case 4:
-
-      break;
-    default:
-  }
-}
-
 document.getElementById("submit").onclick = () => {
   var focus_text = document.getElementById("focus").value;
   var distract_text = document.getElementById("distract").value;
@@ -141,5 +57,4 @@ document.getElementById("submit").onclick = () => {
   console.log("SUBMITTED USER DATA!");
   console.log(focus_text);
   console.log(distract_text);
-
 }

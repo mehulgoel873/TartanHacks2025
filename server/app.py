@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-from preparing_data import *
-from sending_data import *
 
 app = Flask(__name__)
 CORS(app)
@@ -29,12 +27,9 @@ def upload_screenshot():
     # Update status
 
     print("computing pt1")
-    img_txt = get_image_info("screenshot-python.png")
-    print(img_txt)
     print("done computing pt1")
 
     print("computing pt2")
-    current_status = make_decision(img_txt, user_data)
     print("done computing pt2")
 
 
@@ -46,6 +41,7 @@ def get_user_data():
     focus_data = request.form.get("focus")
     distract_data = request.form.get("distract")
     user_data = [focus_data, distract_data]
+    print(user_data)
 
     return jsonify({"message": "Recieved User Data"}), 200
 
