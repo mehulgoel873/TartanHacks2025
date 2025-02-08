@@ -1,6 +1,6 @@
 from openai import OpenAI
 from pydantic import BaseModel
-
+import json
 client = OpenAI()
 
 class ResponseEvent(BaseModel):
@@ -45,8 +45,9 @@ def make_decision(user_act, user_goal):
          }
         
     )   
-    isWorkingonGoal = response.choices[0].message.content[0]
-    confidence = int(response.choices[0].message.content[1]*100)
+    data = json.loads(response.choices[0].message.content)
+    isWorkingonGoal = data["isWorkingOnGoal"]
+    confidence = int(float(data["confidence"])*100)
 
     if (isWorkingonGoal):
         res = 0
@@ -59,5 +60,4 @@ def make_decision(user_act, user_goal):
             res = 3
         else:
             res = 4
-
     return(res)

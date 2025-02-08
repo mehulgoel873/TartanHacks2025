@@ -79,7 +79,7 @@ function sendUserInput(focus_data, distract_data) {
   formData.append("focus", focus_data);
   formData.append("distract", distract_data);
 
-  fetch("http://voltron.lan.cmu.edu:5000/user_data", { // Replace with your API endpoint
+  fetch("http://127.0.0.1:5050/user_data", { // Replace with your API endpoint
     method: "POST",
     body: formData
   })
@@ -92,7 +92,7 @@ function sendImage(blob) {
   const formData = new FormData();
   formData.append("screenshot", blob, "screenshot.png");
 
-  fetch("http://voltron.lan.cmu.edu:5000/upload", { // Replace with your API endpoint
+  fetch("http://127.0.0.1:5050/upload", { // Replace with your API endpoint
     method: "POST",
     body: formData
   })
@@ -104,29 +104,49 @@ function sendImage(blob) {
 
 // Function to fetch data from the server automatically after each screenshot
 function fetchServerData() {
-  fetch("http://voltron.lan.cmu.edu:5000/status") // Replace with actual server endpoint
+  fetch("http://127.0.0.1:5050/status") // Replace with actual server endpoint
     .then(response => response.json())
     .then(data => { console.log("Server Response:", data); callAction(data) })
     .catch(error => console.error("Error fetching data:", error));
 }
 
 
+function browser_notif() {
+  chrome.notifications.create({
+    type: "basic",
+    iconUrl: "icon.png", // Replace with the path to your notification icon
+    title: "LOCK BACK IN COME ON",
+    message: "LOCK IN LOCK LOCK IN LOCK IN",
+    priority: 2}, 
+  (notificationId) => {
+    console.log("Notification sent with ID:", notificationId);
+  });
+    // Play a sound
+    const audio = new Audio("../audios/mixkit-wrong-answer-fail-notification-946.mp3"); // Replace with the path to your audio file
+    audio.play().catch((error) => {
+      console.error("Error playing sound:", error);
+    });
+  }
+  
+
 function callAction(status) {
   switch (status) {
     case 0:
-      allGood();
+      browser_notif();
       break;
     case 1:
-      smallNotif();
+      browser_notif();
       break;
     case 2:
+      browser_notif();
       break;
     case 3:
+      browser_notif();
       break;
     case 4:
-
       break;
     default:
+
   }
 }
 
@@ -137,5 +157,4 @@ document.getElementById("submit").onclick = () => {
   console.log("SUBMITTED USER DATA!");
   console.log(focus_text);
   console.log(distract_text);
-
 }
