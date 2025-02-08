@@ -1,3 +1,6 @@
+import time
+last_time = time.time()
+
 from pathlib import Path
 from typing import Literal
 
@@ -25,12 +28,13 @@ class ImageDescription(BaseModel):
 
 
 # Get path from user input
-path = [Path("./images/bad/imag3.png"), Path("./images/bad/image-2.png"), Path("./images/bad/image.png"), Path("./images/bad/image4.png")]
+path = [Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png"),  Path("./images/screenshot (76).png")] * 10
 
 # Verify the file exists
 for p in path:
     if not p.exists():
         raise FileNotFoundError(f'Image not found at: {p}')
+
 
 # Set up chat as usual
 for p in path:
@@ -50,4 +54,6 @@ for p in path:
 
     # Convert received content to the schema
     image_analysis = ImageDescription.model_validate_json(response.message.content)
-    print(image_analysis)
+    # print(image_analysis)
+    print(time.time() - last_time)
+    last_time = time.time()
